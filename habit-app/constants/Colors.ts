@@ -1,0 +1,41 @@
+export const ColorsDark = {
+  bg: '#0e1114',
+  bgElevated: '#1a1d24',
+  bgBlur: 'rgba(26, 29, 36, 0.8)',
+  text: '#e7ebf3',
+  textDim: '#a4adbd',
+  textMuted: '#6b7280',
+  accent: '#18b7c7',
+  accentPressed: '#14969f',
+  accentSubtle: 'rgba(24, 183, 199, 0.15)',
+  accentBorder: 'rgba(24, 183, 199, 0.3)',
+  ring: 'rgba(24, 183, 199, 0.4)',
+  border: 'rgba(255, 255, 255, 0.1)',
+  separator: 'rgba(255, 255, 255, 0.05)',
+  success: '#34d399',
+  warning: '#fbbf24',
+  danger: '#ef4444',
+  overlay: 'rgba(0, 0, 0, 0.6)',
+};
+
+export const ColorsLight = {
+  bg: '#ffffff',
+  bgElevated: '#f5f5f7',
+  bgBlur: 'rgba(245, 245, 247, 0.9)',
+  text: '#1d1d1f',
+  textDim: '#6e6e73',
+  textMuted: '#9ca3af',
+  accent: '#0071e3',
+  accentPressed: '#0059b3',
+  accentSubtle: 'rgba(0, 113, 227, 0.1)',
+  accentBorder: 'rgba(0, 113, 227, 0.3)',
+  ring: 'rgba(0, 113, 227, 0.3)',
+  border: 'rgba(0, 0, 0, 0.1)',
+  separator: 'rgba(0, 0, 0, 0.05)',
+  success: '#10b981',
+  warning: '#f59e0b',
+  danger: '#dc2626',
+  overlay: 'rgba(0, 0, 0, 0.4)',
+};
+
+export type ColorScheme = typeof ColorsDark;

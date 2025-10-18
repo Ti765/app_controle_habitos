@@ -1,6 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  runOnJS,
+} from 'react-native-reanimated';
 import { useThemeStore } from '../../store/useThemeStore';
 import { useHabitsStore } from '../../store/useHabitsStore';
 import { Input } from '../../components/ui/Input';
@@ -30,6 +37,14 @@ export default function AddHabitModal() {
   const [emoji, setEmoji] = useState('🎯');
   const [pillar, setPillar] = useState<'sleep' | 'nutrition' | 'hydration' | 'movement'>('sleep');
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('morning');
+  
+  const translateY = useSharedValue(500);
+  const opacity = useSharedValue(0);
+
+  useEffect(() => {
+    translateY.value = withSpring(0, { damping: 15 });
+    opacity.value = withTiming(1, { duration: 300 });
+  }, []);
 
   const handleSave = async () => {
     if (!title.trim()) return;
@@ -46,31 +61,49 @@ export default function AddHabitModal() {
     };
 
     await addHabit(newHabit);
-    router.back();
+    handleClose();
   };
 
+  const handleClose = () => {
+    translateY.value = withSpring(500, { damping: 15 });
+    opacity.value = withTiming(0, { duration: 200 }, () => {
+      runOnJS(router.back)();
+    });
+  };
+
+  const animatedOverlayStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  const animatedModalStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
   return (
-    <View style={{ flex: 1, backgroundColor: activeColors.overlay }}>
+    <Animated.View style={[{ flex: 1, backgroundColor: activeColors.overlay }, animatedOverlayStyle]}>
       <TouchableOpacity
         style={{ flex: 1 }}
         activeOpacity={1}
-        onPress={() => router.back()}
+        onPress={handleClose}
       />
       
-      <View
-        style={{
-          backgroundColor: activeColors.bgElevated,
-          borderTopLeftRadius: Radius.lg,
-          borderTopRightRadius: Radius.lg,
-          padding: Spacing.xl,
-          maxHeight: '80%',
-        }}
+      <Animated.View
+        style={[
+          {
+            backgroundColor: activeColors.bgElevated,
+            borderTopLeftRadius: Radius.lg,
+            borderTopRightRadius: Radius.lg,
+            padding: Spacing.xl,
+            maxHeight: '80%',
+          },
+          animatedModalStyle,
+        ]}
       >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.xl }}>
           <Text style={{ fontSize: Typography.xl, fontWeight: FontWeight.bold, color: activeColors.text }}>
             Novo Hábito
           </Text>
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={handleClose}>
             <Ionicons name="close" size={28} color={activeColors.textDim} />
           </TouchableOpacity>
         </View>
@@ -163,7 +196,7 @@ export default function AddHabitModal() {
           </View>
 
           <View style={{ flexDirection: 'row', gap: Spacing.md, marginBottom: Spacing.lg }}>
-            <Button variant="ghost" onPress={() => router.back()} fullWidth>
+            <Button variant="ghost" onPress={handleClose} fullWidth>
               Cancelar
             </Button>
             <Button variant="primary" onPress={handleSave} disabled={!title.trim()} fullWidth>
@@ -171,7 +204,7 @@ export default function AddHabitModal() {
             </Button>
           </View>
         </ScrollView>
-      </View>
-    </View>
+      </Animated.View>
+    </Animated.View>
   );
 }

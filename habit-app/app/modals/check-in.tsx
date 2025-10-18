@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import Animated, {
@@ -6,6 +6,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   withTiming,
+  runOnJS,
 } from 'react-native-reanimated';
 import { BlurView } from 'expo-blur';
 import { useThemeStore } from '../../store/useThemeStore';
@@ -21,6 +22,14 @@ export default function CheckInModal() {
   const { addCheckIn } = useEnergyStore();
   const [energyLevel, setEnergyLevel] = useState(5);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  
+  const translateY = useSharedValue(500);
+  const opacity = useSharedValue(0);
+
+  useEffect(() => {
+    translateY.value = withSpring(0, { damping: 15 });
+    opacity.value = withTiming(1, { duration: 300 });
+  }, []);
 
   const handleSave = async () => {
     await addCheckIn({
@@ -30,7 +39,14 @@ export default function CheckInModal() {
       symptoms: selectedSymptoms,
       timestamp: new Date().toISOString(),
     });
-    router.back();
+    handleClose();
+  };
+
+  const handleClose = () => {
+    translateY.value = withSpring(500, { damping: 15 });
+    opacity.value = withTiming(0, { duration: 200 }, () => {
+      runOnJS(router.back)();
+    });
   };
 
   const toggleSymptom = (symptom: string) => {
@@ -41,28 +57,39 @@ export default function CheckInModal() {
     }
   };
 
+  const animatedOverlayStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  const animatedModalStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
   return (
-    <View style={{ flex: 1, backgroundColor: activeColors.overlay }}>
+    <Animated.View style={[{ flex: 1, backgroundColor: activeColors.overlay }, animatedOverlayStyle]}>
       <TouchableOpacity
         style={{ flex: 1 }}
         activeOpacity={1}
-        onPress={() => router.back()}
+        onPress={handleClose}
       />
       
       <Animated.View
-        style={{
-          backgroundColor: activeColors.bgElevated,
-          borderTopLeftRadius: Radius.lg,
-          borderTopRightRadius: Radius.lg,
-          padding: Spacing.xl,
-          maxHeight: '80%',
-        }}
+        style={[
+          {
+            backgroundColor: activeColors.bgElevated,
+            borderTopLeftRadius: Radius.lg,
+            borderTopRightRadius: Radius.lg,
+            padding: Spacing.xl,
+            maxHeight: '80%',
+          },
+          animatedModalStyle,
+        ]}
       >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.xl }}>
           <Text style={{ fontSize: Typography.xl, fontWeight: FontWeight.bold, color: activeColors.text }}>
             Como está sua energia?
           </Text>
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={handleClose}>
             <Ionicons name="close" size={28} color={activeColors.textDim} />
           </TouchableOpacity>
         </View>
@@ -139,7 +166,7 @@ export default function CheckInModal() {
           </View>
 
           <View style={{ flexDirection: 'row', gap: Spacing.md }}>
-            <Button variant="ghost" onPress={() => router.back()} fullWidth>
+            <Button variant="ghost" onPress={handleClose} fullWidth>
               Cancelar
             </Button>
             <Button variant="primary" onPress={handleSave} fullWidth>
@@ -148,6 +175,6 @@ export default function CheckInModal() {
           </View>
         </ScrollView>
       </Animated.View>
-    </View>
+    </Animated.View>
   );
 }

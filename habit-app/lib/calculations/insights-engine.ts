@@ -48,7 +48,10 @@ export function analyzePatterns(scores: EnergyScore[]): Pattern[] {
 
   const bestPillar = ['sleep', 'nutrition', 'hydration', 'movement'].reduce(
     (best, pillar) => {
-      const avg = recent.reduce((sum, s) => sum + s[pillar as keyof EnergyScore], 0) / recent.length;
+      const avg = recent.reduce((sum, s) => {
+        const value = s[pillar as keyof EnergyScore];
+        return sum + (typeof value === 'number' ? value : 0);
+      }, 0) / recent.length;
       return avg > best.score ? { pillar, score: avg } : best;
     },
     { pillar: 'sleep', score: 0 }

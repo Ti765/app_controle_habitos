@@ -1,0 +1,148 @@
+import { Habit } from '../types/habit';
+import { User, Badge } from '../types/user';
+import { getTodayString, getDaysAgo } from '../../utils/date-helpers';
+
+export const mockHabits: Habit[] = [
+  {
+    id: '1',
+    title: 'Dormir 8 horas',
+    emoji: '😴',
+    timeOfDay: 'night',
+    pillar: 'sleep',
+    streak: 5,
+    completedDates: [
+      getDaysAgo(4),
+      getDaysAgo(3),
+      getDaysAgo(2),
+      getDaysAgo(1),
+      getDaysAgo(0),
+    ],
+    createdAt: getDaysAgo(30),
+  },
+  {
+    id: '2',
+    title: 'Tomar café da manhã',
+    emoji: '🍳',
+    timeOfDay: 'morning',
+    pillar: 'nutrition',
+    streak: 3,
+    completedDates: [getDaysAgo(2), getDaysAgo(1), getDaysAgo(0)],
+    createdAt: getDaysAgo(30),
+  },
+  {
+    id: '3',
+    title: 'Beber 2L de água',
+    emoji: '💧',
+    timeOfDay: 'afternoon',
+    pillar: 'hydration',
+    streak: 7,
+    completedDates: [
+      getDaysAgo(6),
+      getDaysAgo(5),
+      getDaysAgo(4),
+      getDaysAgo(3),
+      getDaysAgo(2),
+      getDaysAgo(1),
+      getDaysAgo(0),
+    ],
+    createdAt: getDaysAgo(30),
+  },
+  {
+    id: '4',
+    title: 'Exercício 30min',
+    emoji: '🏃',
+    timeOfDay: 'morning',
+    pillar: 'movement',
+    streak: 2,
+    completedDates: [getDaysAgo(1), getDaysAgo(0)],
+    createdAt: getDaysAgo(30),
+  },
+  {
+    id: '5',
+    title: 'Alongamento',
+    emoji: '🧘',
+    timeOfDay: 'afternoon',
+    pillar: 'movement',
+    streak: 4,
+    completedDates: [
+      getDaysAgo(3),
+      getDaysAgo(2),
+      getDaysAgo(1),
+      getDaysAgo(0),
+    ],
+    createdAt: getDaysAgo(20),
+  },
+  {
+    id: '6',
+    title: 'Almoço saudável',
+    emoji: '🥗',
+    timeOfDay: 'afternoon',
+    pillar: 'nutrition',
+    streak: 6,
+    completedDates: [
+      getDaysAgo(5),
+      getDaysAgo(4),
+      getDaysAgo(3),
+      getDaysAgo(2),
+      getDaysAgo(1),
+      getDaysAgo(0),
+    ],
+    createdAt: getDaysAgo(30),
+  },
+  {
+    id: '7',
+    title: 'Sem cafeína após 16h',
+    emoji: '☕',
+    timeOfDay: 'night',
+    pillar: 'sleep',
+    streak: 3,
+    completedDates: [getDaysAgo(2), getDaysAgo(1), getDaysAgo(0)],
+    createdAt: getDaysAgo(15),
+  },
+];
+
+const mockBadges: Badge[] = [
+  {
+    id: '1',
+    title: 'Primeira Semana',
+    description: 'Complete 7 dias consecutivos',
+    icon: '🌟',
+    unlockedAt: getDaysAgo(7),
+  },
+  {
+    id: '2',
+    title: 'Hidratação Master',
+    description: 'Complete 30 dias de hidratação',
+    icon: '💧',
+  },
+  {
+    id: '3',
+    title: 'Early Bird',
+    description: 'Complete 10 hábitos matinais',
+    icon: '🌅',
+    unlockedAt: getDaysAgo(3),
+  },
+  {
+    id: '4',
+    title: 'Movimento Constante',
+    description: 'Complete 20 exercícios',
+    icon: '🏃',
+  },
+];
+
+export const mockUser: User = {
+  id: '1',
+  name: 'Usuário',
+  email: 'usuario@example.com',
+  level: 5,
+  totalDays: 14,
+  currentStreak: 7,
+  longestStreak: 10,
+  badges: mockBadges,
+  preferences: {
+    notifications: true,
+    appleHealth: false,
+    theme: 'dark',
+  },
+  createdAt: getDaysAgo(30),
+};
